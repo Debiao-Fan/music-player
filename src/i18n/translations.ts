@@ -44,6 +44,7 @@ export const translations: Translations = {
     'editor.preview': { en: 'SYNC PREVIEW', zh: '同步预览' },
     'editor.paste': { en: 'Paste LRC', zh: '粘贴 LRC' },
     'editor.clear': { en: 'Clear Timestamps', zh: '清除时间戳' },
+    'editor.clear_confirm': { en: 'Clear all timestamps? This will keep the text.', zh: '清除所有时间戳？这将保留文本内容。' },
     'editor.start': { en: 'START SYNC', zh: '开始同步' },
     'editor.recording': { en: 'RECORDING (Tap Space)', zh: '录制中 (按空格打点)' },
     'editor.placeholder': { en: 'Paste lyrics here (one line per bar)...', zh: '在这里粘贴歌词 (一行一个 Bar)...' },
@@ -55,6 +56,13 @@ export const translations: Translations = {
     'player.visualizer': { en: 'Visualizer', zh: '可视化' },
     'player.no_track': { en: 'No Track Selected', zh: '未选择任何曲目' },
     'player.select_beat': { en: 'Select a beat to start', zh: '选择一个伴奏开始 Drop' },
+    'player.play': { en: 'Play', zh: '播放' },
+    'player.pause': { en: 'Pause', zh: '暂停' },
+    'player.next': { en: 'Next Track', zh: '下一首' },
+    'player.prev': { en: 'Previous Track', zh: '上一首' },
+    'player.shuffle': { en: 'Shuffle', zh: '随机播放' },
+    'player.loop': { en: 'Loop', zh: '循环播放' },
+    'player.volume': { en: 'Volume', zh: '音量' },
 
     // Lyrics View
     'lyrics.none': { en: 'No Lyrics', zh: '暂无歌词' },
@@ -80,9 +88,13 @@ export const translations: Translations = {
     'leva.stars_depth': { en: 'Stars Depth', zh: '星空深度' },
     'leva.stars_fade': { en: 'Stars Fade', zh: '星星淡出' },
     'leva.mode.image': { en: 'Image Background', zh: '图片背景' },
+    'leva.mode.tunnel': { en: 'Neon Tunnel', zh: '霓虹隧道' },
     'leva.bg_blur': { en: 'Background Blur', zh: '背景模糊' },
     'leva.upload_bg': { en: 'Upload Image', zh: '上传图片' },
     'leva.save_to_track': { en: 'Save to This Track', zh: '保存到该曲目' },
+    'leva.playback_effects': { en: 'Playback Effects', zh: '播放特效 (C&S)' },
+    'leva.equalizer': { en: 'Equalizer Control', zh: '均衡器控制' },
+    'leva.eq.manual': { en: 'Manual Bands (10)', zh: '手动频段调节' },
 
     // Player
     'player.fullscreen': { en: 'Fullscreen Mode', zh: '全屏模式' },
@@ -103,6 +115,23 @@ export const translations: Translations = {
 
     // Library
     'library.tracks': { en: 'TRACKS', zh: '首曲目' },
+    'library.header.title': { en: 'Title', zh: '标题' },
+    'library.header.artist': { en: 'Artist', zh: '艺术家' },
+    'library.header.actions': { en: 'Actions', zh: '操作' },
+    'library.search_placeholder': { en: 'Search tracks...', zh: '搜索歌曲...' },
+    'library.sort_by': { en: 'Sort by', zh: '排序方式' },
+    'library.sort.date_added': { en: 'Date Added', zh: '添加时间' },
+    'library.sort.title': { en: 'Title', zh: '标题' },
+    'library.sort.artist': { en: 'Artist', zh: '艺术家' },
+
+    // Edit Modal
+    'edit.title': { en: 'Edit Track Info', zh: '编辑曲目信息' },
+    'edit.change_cover': { en: 'Change Cover Art', zh: '更换封面' },
+    'edit.track_title': { en: 'Title', zh: '标题' },
+    'edit.artist': { en: 'Artist', zh: '歌手' },
+    'edit.album': { en: 'Album', zh: '专辑' },
+    'edit.save': { en: 'Save Changes', zh: '保存修改' },
+    'edit.cancel': { en: 'Cancel', zh: '取消' },
 };
 
 export const useTranslation = () => {

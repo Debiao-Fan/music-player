@@ -4,16 +4,17 @@ import { FullscreenView } from './components/layout/FullscreenView';
 import { SettingsModal } from './components/layout/SettingsModal';
 import { DropZone } from './components/audio/DropZone';
 import { useAudio } from './hooks/useAudio';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { VisualizerCanvas } from './components/visualizer/VisualizerCanvas';
 import { LyricEditor } from './components/lyrics/LyricEditor';
 import { LyricsView } from './components/lyrics/LyricsView';
 import { LibraryPage } from './components/library/LibraryPage';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 
 import { useAppStore } from './store/useAppStore';
 import { useTranslation } from './i18n/translations';
-import { Globe, X } from 'lucide-react';
-import { Leva, useControls, button } from 'leva';
+import { X } from 'lucide-react';
+import { Leva, useControls, button, folder } from 'leva';
 import { usePlayerStore } from './store/usePlayerStore';
 import { usePersistence } from './hooks/usePersistence';
 
@@ -23,6 +24,9 @@ function App() {
 
   // Initialize Audio Engine
   useAudio();
+
+  // Initialize Keyboard Shortcuts
+  useKeyboardShortcuts();
 
   // Fullscreen state
   const isFullscreen = useAppStore(state => state.isFullscreen);
@@ -61,108 +65,52 @@ function App() {
     vocal: [-2, -1, 0, 2, 4, 4, 3, 1, -1, -2], // Mid boost for vocals
   };
 
-  // Chopped & Screwed Controls
-  useControls(t('leva.chopped'), {
-    speed: {
-      label: t('leva.speed'),
-      value: playbackRate,
-      min: 0.5,
-      max: 1.5,
-      step: 0.05,
-      onChange: (v) => setPlaybackRate(v)
-    },
-    pitch: {
-      label: t('leva.pitch_preserve'),
-      value: preservesPitch,
-      onChange: (v) => setPreservesPitch(v)
-    },
-    'C&S Mode': button(() => {
-      setPlaybackRate(0.85);
-      setPreservesPitch(false);
-    }),
-    'Normal Mode': button(() => {
-      setPlaybackRate(1.0);
-      setPreservesPitch(true);
-    })
-  }, [t, playbackRate, preservesPitch]); // Dependencies ensure UI updates when store changes
+  // Controls: Grouped into "The Lab"
+  useControls(t('leva.lab'), {
+    [t('leva.playback_effects')]: folder({
+      speed: {
+        label: t('leva.speed'),
+        value: playbackRate,
+        min: 0.5,
+        max: 1.5,
+        step: 0.05,
+        onChange: (v) => setPlaybackRate(v)
+      },
+      pitch: {
+        label: t('leva.pitch_preserve'),
+        value: preservesPitch,
+        onChange: (v) => setPreservesPitch(v)
+      },
+      'C&S Mode': button(() => {
+        setPlaybackRate(0.85);
+        setPreservesPitch(false);
+      }),
+      'Normal Mode': button(() => {
+        setPlaybackRate(1.0);
+        setPreservesPitch(true);
+      })
+    }, { collapsed: false }),
 
-  // Equalizer Controls - Using onEditEnd to avoid infinite loop
-  useControls(t('leva.eq'), {
-    '32Hz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[0] = v;
-        setEqGains(newGains);
-      }
-    },
-    '64Hz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[1] = v;
-        setEqGains(newGains);
-      }
-    },
-    '125Hz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[2] = v;
-        setEqGains(newGains);
-      }
-    },
-    '250Hz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[3] = v;
-        setEqGains(newGains);
-      }
-    },
-    '500Hz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[4] = v;
-        setEqGains(newGains);
-      }
-    },
-    '1kHz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[5] = v;
-        setEqGains(newGains);
-      }
-    },
-    '2kHz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[6] = v;
-        setEqGains(newGains);
-      }
-    },
-    '4kHz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[7] = v;
-        setEqGains(newGains);
-      }
-    },
-    '8kHz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[8] = v;
-        setEqGains(newGains);
-      }
-    },
-    '16kHz': {
-      value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => {
-        const newGains = [...eqGains];
-        newGains[9] = v;
-        setEqGains(newGains);
-      }
-    },
-    [t('leva.eq.preset_flat')]: button(() => setEqGains(EQ_PRESETS.flat)),
-    [t('leva.eq.preset_hiphop')]: button(() => setEqGains(EQ_PRESETS.hiphop)),
-    [t('leva.eq.preset_bass')]: button(() => setEqGains(EQ_PRESETS.bass)),
-    [t('leva.eq.preset_vocal')]: button(() => setEqGains(EQ_PRESETS.vocal)),
-  }, [t]);
+    [t('leva.equalizer')]: folder({
+      [t('leva.eq.preset_flat')]: button(() => setEqGains(EQ_PRESETS.flat)),
+      [t('leva.eq.preset_hiphop')]: button(() => setEqGains(EQ_PRESETS.hiphop)),
+      [t('leva.eq.preset_bass')]: button(() => setEqGains(EQ_PRESETS.bass)),
+      [t('leva.eq.preset_vocal')]: button(() => setEqGains(EQ_PRESETS.vocal)),
+
+      [t('leva.eq.manual')]: folder({
+        '32Hz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[0] = v; setEqGains(n); } },
+        '64Hz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[1] = v; setEqGains(n); } },
+        '125Hz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[2] = v; setEqGains(n); } },
+        '250Hz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[3] = v; setEqGains(n); } },
+        '500Hz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[4] = v; setEqGains(n); } },
+        '1kHz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[5] = v; setEqGains(n); } },
+        '2kHz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[6] = v; setEqGains(n); } },
+        '4kHz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[7] = v; setEqGains(n); } },
+        '8kHz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[8] = v; setEqGains(n); } },
+        '16kHz': { value: 0, min: -12, max: 12, step: 0.5, onEditEnd: (v) => { const n = [...eqGains]; n[9] = v; setEqGains(n); } },
+      }, { collapsed: true })
+    }, { collapsed: false })
+  }, [t, playbackRate, preservesPitch]); // Dependencies ensure UI updates when store changes
 
   return (
     <div className="flex h-screen w-full text-white overflow-hidden font-sans selection:bg-primary selection:text-white relative bg-black">
@@ -197,15 +145,7 @@ function App() {
       </div>
       {/* Global Drag & Drop Zone Wrapper */}
       <DropZone>
-        {activeMenu === 'player' && (
-          <>
-            {/* 3D Visualizer Background */}
-            <VisualizerCanvas key={language} />
 
-            {/* Lyrics Overlay - Full Screen on top of Visualizer */}
-            <LyricsView />
-          </>
-        )}
 
         {/* Flex Container for Layout */}
         <div className="flex h-full w-full relative z-10 pointer-events-none">
@@ -216,7 +156,16 @@ function App() {
 
           {/* Main Content Area */}
           <main className="flex-1 flex flex-col relative overflow-hidden pointer-events-auto">
-            <div className="h-16 border-b border-white/5 flex items-center px-6 justify-end bg-[#0a0a0a]/80 backdrop-blur-xl z-20">
+            {activeMenu === 'player' && (
+              <>
+                {/* 3D Visualizer Background */}
+                <VisualizerCanvas key={language} />
+
+                {/* Lyrics Overlay - Full Screen on top of Visualizer */}
+                <LyricsView />
+              </>
+            )}
+            <div className="h-16 border-b border-white/10 flex items-center px-6 justify-end bg-white/[0.08] backdrop-blur-xl z-20">
               <div className="flex items-center gap-4">
                 {/* Segmented Language Control */}
                 <div className="flex items-center bg-white/5 rounded-full p-1 border border-white/5">
@@ -240,7 +189,7 @@ function App() {
                   </button>
                 </div>
 
-                <div className="w-8 h-8 rounded-full bg-surface-light border border-white/10" />
+                {/* User avatar hidden: <div className="w-8 h-8 rounded-full bg-surface-light border border-white/10" /> */}
               </div>
             </div>
 
@@ -252,13 +201,7 @@ function App() {
                   <div className="max-w-4xl mx-auto space-y-8">
                     {/* Dashboard Widgets */}
                     <div className="max-w-4xl mx-auto space-y-8">
-                      {/* Dashboard Widgets */}
-                      <div className="flex flex-col items-center justify-center h-[60vh] text-center space-y-4">
-                        <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent animate-pulse">
-                          {t('sidebar.brand')}
-                        </div>
-                        <p className="text-gray-500 text-sm">{t('player.select_beat')}</p>
-                      </div>
+                      {/* Dashboard Widgets Removed */}
                     </div>
                   </div>
                 </div>

@@ -42,7 +42,8 @@ export const usePersistence = () => {
                 // Recreate blob URLs from stored blobs
                 const tracksWithUrls = tracks.map(track => ({
                     ...track,
-                    src: track.blob ? URL.createObjectURL(track.blob) : track.src
+                    src: track.blob ? URL.createObjectURL(track.blob) : track.src,
+                    cover: track.coverBlob ? URL.createObjectURL(track.coverBlob) : track.cover
                 }));
                 setPlaylist(tracksWithUrls);
             }
@@ -64,18 +65,37 @@ export const usePersistence = () => {
 
     // Save Playlist on Change (with shorter debounce)
     useEffect(() => {
-        if (playlist.length > 0) {
-            const timer = setTimeout(async () => {
-                // Save all tracks
-                try {
-                    await db.tracks.bulkPut(playlist);
-                    console.log('✅ Playlist saved:', playlist.length, 'tracks');
-                } catch (error) {
-                    console.error('❌ Failed to save playlist:', error);
+        // We always run this sync, even if playlist is empty, 
+        // because an empty playlist means we might have deleted the last track.
+        const timer = setTimeout(async () => {
+            try {
+                // 1. Get all IDs currently in the Store
+                const currentIds = new Set(playlist.map(t => t.id));
+
+                // 2. Get all IDs currently in the DB
+                const dbTracks = await db.tracks.toArray();
+                const dbIds = dbTracks.map(t => t.id);
+
+                // 3. Find IDs that are in DB but NOT in Store (these should be deleted)
+                const idsToDelete = dbIds.filter(id => !currentIds.has(id));
+
+                // 4. Perform Deletion
+                if (idsToDelete.length > 0) {
+                    await db.tracks.bulkDelete(idsToDelete);
+                    console.log('🗑️ Deleted tracks from DB:', idsToDelete.length);
                 }
-            }, 500); // Reduced from 1000ms to 500ms
-            return () => clearTimeout(timer);
-        }
+
+                // 5. Perform Upsert (Add/Update)
+                if (playlist.length > 0) {
+                    await db.tracks.bulkPut(playlist);
+                    console.log('✅ Playlist saved/updated:', playlist.length, 'tracks');
+                }
+            } catch (error) {
+                console.error('❌ Failed to sync playlist:', error);
+            }
+        }, 500);
+
+        return () => clearTimeout(timer);
     }, [playlist]);
 
     return null;

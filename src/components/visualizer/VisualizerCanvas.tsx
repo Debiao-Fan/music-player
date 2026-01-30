@@ -5,6 +5,7 @@ import { useRef, useMemo, useState } from 'react';
 import { AudioDataBridge } from './AudioDataBridge';
 import { ClassicBars } from './scenes/ClassicBars';
 import { BassPulse } from './scenes/BassPulse';
+import { CircularTunnel } from './scenes/CircularTunnel';
 import { folder, useControls } from 'leva';
 import { useTranslation } from '../../i18n/translations';
 import { usePlayerStore } from '../../store/usePlayerStore';
@@ -40,6 +41,7 @@ export const VisualizerCanvas = () => {
     const modeOptions = useMemo(() => ({
         [t('leva.mode.classic')]: 'Classic Bars',
         [t('leva.mode.bass')]: 'Bass Pulse',
+        [t('leva.mode.tunnel')]: 'Neon Tunnel',
         [t('leva.mode.image')]: 'Image Background'
     }), [t]);
 
@@ -212,6 +214,7 @@ export const VisualizerCanvas = () => {
                     {/* Visualizer Scenes */}
                     {mode === 'Classic Bars' && <ClassicBars audioData={audioDataRef.current} />}
                     {mode === 'Bass Pulse' && <BassPulse audioData={audioDataRef.current} />}
+                    {mode === 'Neon Tunnel' && <CircularTunnel audioData={audioDataRef.current} />}
 
                     {/* Post Processing */}
                     <EffectComposer disableNormalPass>

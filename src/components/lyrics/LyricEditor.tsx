@@ -18,12 +18,8 @@ export const LyricEditor = ({ onClose }: { onClose: () => void }) => {
         ? playlist.find(t => t.id === lyricEditorState.trackId)
         : currentPlayingTrack;
 
-    // Is the target track currently playing?
-    const isTargetPlaying = currentPlayingTrack?.id === targetTrack?.id;
-
     const isPlaying = usePlayerStore(state => state.isPlaying);
     const currentTime = usePlayerStore(state => state.currentTime);
-    const audioDuration = usePlayerStore(state => state.duration); // This might be for playing track only
 
     // Actions
     const setTrackLyrics = usePlayerStore(state => state.setTrackLyrics);
@@ -115,7 +111,7 @@ export const LyricEditor = ({ onClose }: { onClose: () => void }) => {
     };
 
     const handleClearTimestamps = () => {
-        if (confirm('Clear all timestamps? This will keep the text.')) {
+        if (confirm(t('editor.clear_confirm'))) {
             setSyncedLines([]);
             setCurrentSyncIndex(0);
         }

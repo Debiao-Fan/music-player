@@ -63,14 +63,14 @@ export const Sidebar = () => {
 
 
             {/* Settings Area - Visually separated */}
-            <div className="p-4 mt-auto border-t border-white/5 bg-black/20">
+            <div className="p-4 mt-auto">
                 <NavItem
                     id="settings-trigger-btn"
                     icon={Settings}
                     label={t('menu.settings')}
                     active={isSettingsMenuOpen}
                     onClick={toggleSettingsMenu}
-                    className={isSettingsMenuOpen ? "text-white bg-white/10 border-l-0" : ""}
+                    className={isSettingsMenuOpen ? "text-white hover:text-primary transition-colors border-l-0" : "hover:text-white transition-colors"}
                 />
             </div>
         </aside>
